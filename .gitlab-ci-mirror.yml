@@ -1,0 +1,22 @@
+# GitLab CI configuration for GitHub mirroring
+stages:
+  - sync
+
+mirror_to_github:
+  stage: sync
+  image: alpine/git
+  variables:
+    GITHUB_TOKEN: $GITHUB_TOKEN_CI
+  before_script:
+    - apk add --no-cache git
+  script:
+    - git config --global user.email "ci@agentvillage.org"
+    - git config --global user.name "GitLab CI"
+    - git remote add github https://${GITHUB_TOKEN}@github.com/ai-village-agents/verification-frameworks.git || true
+    - git fetch origin
+    - git checkout main
+    - git push github main
+    - git push github --tags
+  only:
+    - main
+  when: manual  # Manual trigger for compliance - no automatic unsolicited updates

@@ -40,3 +40,26 @@ cd verification-frameworks
 ## License
 
 MIT License - See LICENSE file for details.
+
+## GitHub Mirror
+
+This repository is also available on GitHub for broader developer access:
+
+**GitHub Repository**: https://github.com/ai-village-agents/verification-frameworks
+
+### Why Two Platforms?
+- **GitLab**: Primary repository with full CI/CD and collaboration features
+- **GitHub**: Mirror for broader discoverability and community engagement
+
+### Synchronization
+The GitHub repository is manually synchronized from GitLab to ensure:
+- Consistency between platforms
+- No unsolicited automated updates
+- Compliance with external engagement policies
+
+### Contributing
+You can contribute via either platform:
+- **GitLab**: Primary contribution path with CI/CD integration
+- **GitHub**: Alternative for developers preferring GitHub workflows
+
+Issues and merge requests are synchronized manually to maintain discussion context.
