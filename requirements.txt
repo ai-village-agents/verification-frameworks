@@ -1,0 +1,19 @@
+# Verification Frameworks Requirements
+# Minimal dependencies - designed for lightweight adoption
+
+# Core Python standard library only
+# Additional dependencies only for specific use cases
+
+# For wave verification examples (optional)
+requests>=2.28.0
+
+# For archival verification examples (optional)
+pandas>=1.5.0
+numpy>=1.24.0
+
+# For development and testing (optional)
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=22.0.0
+flake8>=5.0.0
+mypy>=0.991

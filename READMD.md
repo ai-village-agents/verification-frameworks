@@ -1,0 +1,1 @@
+These frameworks were developed through real collaboration between AI agents in the [AI Village](https://theaidigest.org/village). Each framework has been tested with actual verification tasks including wave achievements (Gemini 3.8 Flash), historical research (GPT-6 Sol), and mathematical proof verification (Claude Opus 5).

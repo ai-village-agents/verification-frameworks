@@ -1,0 +1,147 @@
+# GitLab CI/CD for Verification Frameworks
+# Example configuration showing integration patterns
+
+image: python:3.10-slim
+
+stages:
+  - test
+  - verify
+  - deploy
+
+cache:
+  paths:
+    - .cache/pip
+  key: $CI_COMMIT_REF_SLUG
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+before_script:
+  - python --version
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
+
+.test-template: &test-template
+  stage: test
+  script:
+    - python -m pytest tests/ -v --cov=verification_frameworks --cov-report=xml
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+
+wave-verification-tests:
+  <<: *test-template
+  script:
+    - python -m pytest tests/test_wave_verifier.py -v
+  artifacts:
+    paths:
+      - test-results/wave/
+
+archival-verification-tests:
+  <<: *test-template
+  script:
+    - python -m pytest tests/test_archival_verifier.py -v
+  artifacts:
+    paths:
+      - test-results/archival/
+
+cold-verification-tests:
+  <<: *test-template
+  script:
+    - python -m pytest tests/test_cold_verification.py -v
+  artifacts:
+    paths:
+      - test-results/cold/
+
+# Example: Integration verification using the frameworks
+example-wave-210-verification:
+  stage: verify
+  script:
+    - echo "Example: Wave 210 Verification (from Gemini 3.8 Flash collaboration)"
+    - cd examples/wave-210
+    - python example_wave_210.py
+    - echo "Verification completed - see output for confidence scores"
+  artifacts:
+    paths:
+      - examples/wave-210/verification_report.json
+
+example-rosa-parks-verification:
+  stage: verify  
+  script:
+    - echo "Example: Rosa Parks Finding #196 Verification (from GPT-6 Sol collaboration)"
+    - cd examples/rosa-parks-196
+    - python example_rosa_parks_196.py
+    - echo "Archival verification completed - see confidence scoring results"
+  artifacts:
+    paths:
+      - examples/rosa-parks-196/verification_report.json
+
+example-agx-thesis-verification:
+  stage: verify
+  script:
+    - echo "Example: AGX Thesis Verification (from Claude Opus 5 collaboration)"
+    - echo "Note: This would require nauty-geng for actual execution"
+    - echo "Demonstrating protocol structure and reporting..."
+    - python frameworks/protocol/cold_verification_protocol.py
+  artifacts:
+    paths:
+      - verification_protocol_demo.json
+
+# Documentation generation
+generate-docs:
+  stage: deploy
+  script:
+    - pip install mkdocs mkdocs-material
+    - mkdocs build --site-dir public
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - main
+
+# Publish to GitLab Pages
+pages:
+  stage: deploy
+  script:
+    - mkdir public
+    - cp -r docs/* public/
+    - cp README.md public/index.md
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+
+# Security scanning integration
+sast:
+  stage: test
+  include:
+    - template: Security/SAST.gitlab-ci.yml
+
+# Code quality checking
+code-quality:
+  stage: test
+  script:
+    - pip install black flake8 mypy
+    - black --check .
+    - flake8 .
+    - mypy verification_frameworks --ignore-missing-imports
+  allow_failure: true
+  artifacts:
+    reports:
+      codequality: gl-code-quality-report.json
+
+# Performance benchmarks
+performance-benchmark:
+  stage: test
+  script:
+    - echo "Running performance benchmarks for verification frameworks"
+    - python benchmarks/run_benchmarks.py
+  artifacts:
+    paths:
+      - benchmarks/results/
+    reports:
+      performance: benchmarks/results/performance.json
